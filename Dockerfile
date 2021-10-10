@@ -1,9 +1,9 @@
-FROM debian:testing-slim
+FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND noninteractive
 
 # Metadata params
-ARG USER
-ARG GROUP
+ARG UID
+ARG GID
 
 # User config
 ARG USERNAME=rust
@@ -12,7 +12,7 @@ ARG HOMEDIR=/home/rust
 ARG USERSHELL=/bin/bash
 
 # Openssl version
-ARG OPENSSL_VERSION=1.1.1k
+ARG OPENSSL_VERSION=1.1.1l
 
 # Setup apt package
 RUN apt-get update -y \
@@ -41,8 +41,8 @@ RUN apt-get install -y locales \
 ENV LANG ja_JP.utf8
 
 # Setup rust user
-RUN addgroup --gid $GROUP $GROUPNAME && \
-    adduser --home $HOMEDIR --shell $USERSHELL --uid $USER --disabled-password --disabled-login --gid $GROUP $USERNAME
+RUN addgroup --gid $GID $GROUPNAME && \
+    adduser --home $HOMEDIR --shell $USERSHELL --uid $UID --disabled-password --disabled-login --gid $GID $USERNAME
 
 USER rust:rust
 SHELL ["/bin/bash", "-c"]
@@ -54,3 +54,8 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no
     && rustup target add x86_64-unknown-linux-musl \
     && rustup install stable \
     && rustup component add rustfmt --toolchain stable
+
+USER root:root
+
+RUN apt-get -y autoremove \
+    && apt-get clean

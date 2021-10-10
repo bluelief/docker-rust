@@ -1,10 +1,7 @@
 #!/bin/bash
 
-USER=$(id -u)
-GROUP=$(id -g)
-
 docker build \
-  --build-arg USER=$USER \
-  --build-arg GROUP=$GROUP \
+  --build-arg UID=$(id -u) \
+  --build-arg GID=$(id -g) \
   --tag rust:latest \
   .
